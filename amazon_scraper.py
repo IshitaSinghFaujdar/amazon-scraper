@@ -2,7 +2,9 @@
 from scraper.driver_setup import get_driver
 from scraper.fetch_products import fetch_product_elements
 from scraper.extract_details import extract_product_data
+from utils.data_cleaning import clean_amazon_data
 import pandas as pd
+from utils.visualizer import brand_performance_analysis
 
 def scrape_amazon_soft_toys():
     driver = get_driver()
@@ -24,11 +26,20 @@ def scrape_amazon_soft_toys():
     df_all = pd.DataFrame(all_data)
     df_sponsored = pd.DataFrame(sponsored_data)
 
-    print(f"\n✅ Total products extracted: {len(df_all)}")
-    print(f"⭐ Sponsored products: {len(df_sponsored)}")
+    print(f"\nTotal products extracted: {len(df_all)}")
+    print(f"Sponsored products: {len(df_sponsored)}")
 
     return df_all, df_sponsored
 
 if __name__ == "__main__":
     df_all, df_sponsored = scrape_amazon_soft_toys()
     print(df_all.head())
+    
+    df_all_cleaned = clean_amazon_data(df_all)
+
+    
+    df_all_cleaned.to_csv("data/cleaned_amazon_soft_toys.csv", index=False)
+    print("\nCleaned data saved to: data/cleaned_amazon_soft_toys.csv")
+    brand_performance_analysis(df_all_cleaned)
+    
+    
